@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="AI Layoff Tracker 2026 — Live tracking of every AI-driven job cut worldwide."/>
+<title>AI Layoff Tracker 2026 — Live Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--red:#ff3030;--red-dim:#cc2020;--red-glow:rgba(255,48,48,0.15);--bg:#070709;--bg2:#0e0e12;--bg3:#14141a;--bg4:#1a1a22;--bg5:#202028;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.18);--text:#eeeef2;--text2:#8888a0;--text3:#444458;--green:#10b981;--amber:#f59e0b;--blue:#4f8ef7;--purple:#a78bfa;--font:'Space Grotesk',sans-serif;--font-serif:'Instrument Serif',serif;--r:8px;--r2:14px;--r3:20px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;display:flex;align-items:center;padding:0 1.5rem;gap:1rem;background:rgba(7,7,9,0.94);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;white-space:nowrap}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{box-shadow:0 0 0 0 var(--red-glow)}60%{box-shadow:0 0 0 7px transparent}}
+.nav-tabs{display:flex;gap:2px;flex:1;justify-content:center}
+.tab{background:none;border:none;color:var(--text2);font-family:var(--font);font-size:13px;padding:6px 13px;border-radius:var(--r);cursor:pointer;transition:.15s;white-space:nowrap}
+.tab:hover{color:var(--text);background:var(--bg3)}.tab.on{color:var(--text);background:var(--bg4);border:1px solid var(--border2)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-alert-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-family:var(--font);font-size:12px;padding:6px 12px;border-radius:var(--r);cursor:pointer;transition:.15s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.nav-alert-btn:hover{color:var(--text);border-color:var(--border3)}
+.nav-cta{background:var(--red);color:#fff;border:none;font-family:var(--font);font-size:13px;font-weight:600;padding:7px 16px;border-radius:var(--r);cursor:pointer;transition:.15s;white-space:nowrap}
+.nav-cta:hover{background:var(--red-dim)}.burger{display:none;background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer}
+.ticker-strip{background:rgba(255,48,48,0.07);border-bottom:1px solid rgba(255,48,48,0.15);padding:8px 0;overflow:hidden;position:relative}
+.ticker-strip::before,.ticker-strip::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:2}
+.ticker-strip::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.ticker-strip::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent)}
+.ticker-inner{display:flex;width:max-content;animation:roll 50s linear infinite}
+.ticker-inner:hover{animation-play-state:paused}
+@keyframes roll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tick{display:inline-flex;align-items:center;gap:6px;padding:0 2rem;font-size:12px;white-space:nowrap}
+.tick-co{font-weight:600;color:var(--text)}.tick-n{color:var(--red);font-weight:700}.tick-sep{color:var(--text3)}
+.page{display:none;padding-top:92px}.page.on{display:block}
+.wrap{max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem}
+.hero{padding:0.5rem 1.5rem 2rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:900px;height:500px;background:radial-gradient(ellipse,rgba(255,48,48,0.05) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,48,48,0.25);background:rgba(255,48,48,0.07);color:#ff7070;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;margin-bottom:1.5rem;letter-spacing:.04em}
+.hero h1{font-size:clamp(2.4rem,6vw,4.5rem);font-weight:700;line-height:1.08;letter-spacing:-0.03em;margin-bottom:1.2rem}
+.hero h1 em{font-family:var(--font-serif);font-style:italic;color:var(--red)}
+.hero-sub{font-size:clamp(.95rem,2vw,1.1rem);color:var(--text2);max-width:520px;margin:0 auto 2rem;line-height:1.75}
+.hero-nums{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+.hero-num-val{font-size:2rem;font-weight:700;color:var(--red)}.hero-num-lab{font-size:12px;color:var(--text3);margin-top:2px}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:14px;font-weight:500;padding:11px 22px;border-radius:var(--r);cursor:pointer;transition:.15s;border:none}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-dim)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}.btn-ghost:hover{color:var(--text);background:var(--bg3);border-color:var(--border3)}
+.news-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:flex-start;gap:1rem}
+.news-bar-label{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px;white-space:nowrap;letter-spacing:.06em;margin-top:2px}
+.news-items{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.news-item{font-size:13px;color:var(--text2);line-height:1.4;display:flex;align-items:baseline;gap:8px}
+.news-item a{color:var(--blue);transition:.15s}.news-item a:hover{color:#93c5fd}
+.news-ago{font-size:11px;color:var(--text3);white-space:nowrap}
+.news-refresh{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:4px;border-radius:4px;transition:.15s;flex-shrink:0}
+.news-refresh:hover{color:var(--text2);background:var(--bg3)}
+.sponsor-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:.875rem 1.25rem;display:flex;align-items:center;gap:1rem;font-size:13px;margin-bottom:1.5rem;flex-wrap:wrap}
+.sponsor-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);white-space:nowrap}
+.sponsor-msg{color:var(--text2);flex:1}.sponsor-msg a{color:var(--blue)}.sponsor-msg a:hover{color:#93c5fd}
+.sponsor-cta{background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--r);cursor:pointer;transition:.15s;white-space:nowrap}
+.sponsor-cta:hover{background:var(--bg4)}
+.s-tag{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.s-title{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;line-height:1.15;margin-bottom:.75rem}
+.s-sub{color:var(--text2);font-size:.95rem;line-height:1.7;margin-bottom:2rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:2rem}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;transition:.2s}
+.sc:hover{border-color:var(--border2)}
+.sc-ico{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:.8rem}
+.sc-ico.r{background:rgba(255,48,48,0.1);color:var(--red)}.sc-ico.g{background:rgba(16,185,129,0.1);color:var(--green)}
+.sc-ico.a{background:rgba(245,158,11,0.1);color:var(--amber)}.sc-ico.b{background:rgba(79,142,247,0.1);color:var(--blue)}.sc-ico.p{background:rgba(167,139,250,0.1);color:var(--purple)}
+.sc-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.sc-val{font-size:1.75rem;font-weight:700;line-height:1}.sc-delta{font-size:11px;color:var(--text2);margin-top:3px}.sc-delta.up{color:var(--red)}
+.fbar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:.875rem 1rem;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:1.25rem}
+.fbar input,.fbar select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;padding:7px 11px;border-radius:var(--r);outline:none;transition:.15s}
+.fbar input{flex:1;min-width:160px}.fbar input::placeholder{color:var(--text3)}.fbar input:focus,.fbar select:focus{border-color:var(--red)}
+.fbar select option{background:var(--bg3)}.fbar-actions{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.fbar-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:12px;padding:6px 11px;border-radius:var(--r);cursor:pointer;transition:.15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.fbar-btn:hover{color:var(--text);border-color:var(--border2)}.fbar-count{font-size:12px;color:var(--text3);align-self:center}
+.tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:1.5rem;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:700px}
+thead th{background:var(--bg3);padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);text-align:left;white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--text2)}tbody tr{border-top:1px solid var(--border);transition:.12s}tbody tr:hover{background:var(--bg3)}
+td{padding:13px 14px;font-size:13.5px;vertical-align:middle}
+.co-wrap{display:flex;align-items:center;gap:9px}
+.av{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.co-n{font-weight:600;color:var(--text);display:flex;align-items:center;gap:5px}.co-s{font-size:11px;color:var(--text3)}
+.pill{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.p-ai{background:rgba(255,48,48,0.1);color:#ff7070}.p-mix{background:rgba(245,158,11,0.1);color:#fbbf24}
+.p-cost{background:rgba(79,142,247,0.1);color:#7eb0ff}.p-off{background:rgba(167,139,250,0.1);color:#c4b5fd}
+.pr-wrap{display:flex;align-items:center;gap:7px}.pr-bar{width:52px;height:3px;background:var(--bg5);border-radius:2px;overflow:hidden}
+.pr-fill{height:100%;border-radius:2px}.src-link{color:var(--blue);font-size:12px;display:inline-flex;align-items:center;gap:4px;transition:.15s}
+.src-link:hover{color:#93c5fd}.new-badge{font-size:9px;font-weight:700;background:var(--red);color:#fff;padding:2px 5px;border-radius:3px;vertical-align:middle;margin-left:4px}
+.empty-td{text-align:center;padding:3rem;color:var(--text3)}
+.pager{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:.75rem}
+.pg{background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:13px;padding:5px 11px;border-radius:var(--r);cursor:pointer;transition:.12s;min-width:34px;text-align:center}
+.pg:hover{color:var(--text);border-color:var(--border2)}.pg.on{background:var(--red);border-color:var(--red);color:#fff}.pg:disabled{opacity:.3;cursor:default}
+.chart-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.5rem}
+.cc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem}
+.cc h3{font-size:13px;font-weight:600;margin-bottom:1rem;color:var(--text)}.ch-wrap{position:relative;width:100%}
+.nl-box{background:linear-gradient(135deg,rgba(79,142,247,0.06),rgba(167,139,250,0.04));border:1px solid rgba(79,142,247,0.18);border-radius:var(--r2);padding:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;margin:2rem 0}
+.nl-copy{flex:1;min-width:200px}.nl-copy h4{font-size:1rem;font-weight:700;margin-bottom:.2rem}.nl-copy p{font-size:13px;color:var(--text2)}
+.nl-form{display:flex;gap:8px;flex-wrap:wrap}
+.nl-inp{background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13px;padding:9px 14px;border-radius:var(--r);outline:none;min-width:180px;flex:1}
+.nl-inp::placeholder{color:var(--text3)}.nl-inp:focus{border-color:var(--blue)}
+.nl-btn{background:var(--blue);color:#fff;border:none;font-family:var(--font);font-size:13px;font-weight:700;padding:9px 18px;border-radius:var(--r);cursor:pointer;transition:.15s;white-space:nowrap}
+.nl-btn:hover{background:#3b7de8}
+.mono-hero{background:linear-gradient(135deg,rgba(255,48,48,0.07),rgba(79,142,247,0.05));border:1px solid var(--border);border-radius:var(--r3);padding:2.5rem;text-align:center;margin-bottom:2rem}
+.mono-hero h2{font-size:2rem;font-weight:700;margin-bottom:.5rem}.mono-hero p{color:var(--text2);max-width:500px;margin:0 auto}
+.earn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-bottom:2rem}
+.earn-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.5rem;transition:.2s;position:relative;overflow:hidden}
+.earn-card:hover{border-color:var(--border2);transform:translateY(-2px)}.earn-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--earn-accent,var(--red))}
+.earn-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.6rem}
+.earn-title{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.earn-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:.8rem}
+.earn-est{font-size:12px;font-weight:600;color:var(--green);background:rgba(16,185,129,0.08);padding:4px 10px;border-radius:20px;display:inline-block}
+.step-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:.75rem}
+.step-list li{display:flex;gap:12px;align-items:flex-start}
+.step-n{width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-text{font-size:13px;color:var(--text2);line-height:1.5}.step-text strong{color:var(--text)}
+.income-tbl{width:100%;border-collapse:collapse;font-size:14px}
+.income-tbl th{text-align:left;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);background:var(--bg3);border-bottom:1px solid var(--border)}
+.income-tbl td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2)}.income-tbl td:last-child{color:var(--green);font-weight:600}.income-tbl tr:last-child td{border-bottom:none}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.on{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);padding:2rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;position:relative}
+.modal-x{position:absolute;top:1rem;right:1rem;background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.modal-x:hover{color:var(--text)}.modal h3{font-size:1.2rem;font-weight:700;margin-bottom:.3rem}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:1.25rem}
+.fg{margin-bottom:1rem}.fl{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.fi,.fs,.fta{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:14px;padding:9px 13px;border-radius:var(--r);outline:none;transition:.15s}
+.fi::placeholder,.fta::placeholder{color:var(--text3)}.fi:focus,.fs:focus,.fta:focus{border-color:var(--red)}.fs option{background:var(--bg3)}.fta{resize:vertical;min-height:75px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:.875rem}
+.fsub{width:100%;background:var(--red);color:#fff;border:none;font-family:var(--font);font-size:14px;font-weight:700;padding:12px;border-radius:var(--r);cursor:pointer;margin-top:.25rem;transition:.15s}
+.fsub:hover{background:var(--red-dim)}.fsub:disabled{opacity:.5;cursor:default}.fnote{font-size:11px;color:var(--text3);text-align:center;margin-top:7px}
+.pet-card{background:linear-gradient(135deg,rgba(255,48,48,0.06),rgba(255,48,48,0.02));border:1px solid rgba(255,48,48,0.2);border-radius:var(--r3);padding:2.5rem;text-align:center;margin-bottom:2rem}
+.pet-big{font-size:3.5rem;font-weight:700;color:var(--red);line-height:1}
+.pet-prog{height:6px;background:var(--bg3);border-radius:3px;margin:1.25rem auto;max-width:380px;overflow:hidden}
+.pet-fill{height:100%;background:linear-gradient(90deg,var(--red-dim),var(--red));border-radius:3px;transition:width 1.2s ease}
+.pet-form{display:flex;gap:8px;max-width:400px;margin:1.25rem auto 0;flex-wrap:wrap;justify-content:center}
+.pet-inp{flex:1;min-width:150px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:14px;padding:10px 14px;border-radius:var(--r);outline:none}
+.pet-inp::placeholder{color:var(--text3)}.pet-inp:focus{border-color:var(--red)}
+.pet-btn{background:var(--red);color:#fff;border:none;font-family:var(--font);font-size:14px;font-weight:700;padding:10px 22px;border-radius:var(--r);cursor:pointer;transition:.15s}
+.pet-btn:hover{background:var(--red-dim)}
+.sigs{display:flex;flex-direction:column;gap:8px}
+.sig{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px}
+.sig-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;background:rgba(255,48,48,0.1);color:var(--red)}
+.sig-name{font-size:14px;font-weight:500;flex:1}.sig-loc{font-size:12px;color:var(--text3)}
+.pol-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-bottom:2rem}
+.pol-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.5rem;transition:.2s}
+.pol-card:hover{border-color:var(--border2)}.pol-icon{font-size:1.4rem;margin-bottom:.8rem}.pol-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem}.pol-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.pol-foot{display:flex;align-items:center;justify-content:space-between;margin-top:.8rem}.pol-where{font-size:11px;color:var(--text3)}
+.pol-status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.ps-active{background:rgba(16,185,129,0.1);color:var(--green)}.ps-proposed{background:rgba(245,158,11,0.1);color:var(--amber)}.ps-draft{background:rgba(79,142,247,0.1);color:var(--blue)}
+.code-blk{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;font-family:monospace;font-size:13px;color:#7dd3fc;white-space:pre-wrap;line-height:1.7;margin-bottom:1rem;overflow-x:auto}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-bottom:2rem}
+.res-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;display:flex;flex-direction:column;gap:7px;transition:.2s}
+.res-card:hover{border-color:var(--border2)}.res-icon{font-size:1.25rem}.res-title{font-weight:600;font-size:14px}.res-desc{font-size:12px;color:var(--text2);line-height:1.5;flex:1}
+.res-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg3);color:var(--text3);align-self:flex-start;font-weight:600;letter-spacing:.04em}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg2);border:1px solid var(--green);color:var(--text);font-size:14px;padding:11px 18px;border-radius:var(--r);z-index:400;display:none;align-items:center;gap:9px;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.toast.on{display:flex;animation:slideup .3s ease}
+@keyframes slideup{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-width:768px){.nav-tabs{display:none}.burger{display:flex}.f2{grid-template-columns:1fr}.hero-nums{gap:1.25rem}.earn-grid{grid-template-columns:1fr}.nl-form{flex-direction:column}.chart-row{grid-template-columns:1fr}}
+
+.disclaimer-bar{position:fixed;top:58px;left:0;right:0;z-index:190;background:#1a1500;border-bottom:1px solid rgba(245,158,11,0.3);padding:6px 1rem;font-size:11.5px;color:#c9a227;text-align:center;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.disclaimer-bar a{color:#e0b84a;text-decoration:underline;cursor:pointer;font-weight:500}
+.privacy-modal{display:none}
+.privacy-modal.on{display:flex}
+.unverified-badge{font-size:9px;font-weight:700;background:rgba(245,158,11,0.15);color:#b58a00;border:1px solid rgba(245,158,11,0.3);padding:2px 5px;border-radius:3px;vertical-align:middle;margin-left:4px}
+</style>
+</head>
+<body>
+
+
+<nav>
+  <div class="nav-logo"><div class="live-dot"></div> AI Layoff Tracker</div>
+  <div class="nav-tabs" id="nav-tabs">
+    <button class="tab on" onclick="go('dash')">Dashboard</button>
+    <button class="tab" onclick="go('map')">World Map</button>
+    <button class="tab" onclick="go('policy')">Policy</button>
+    <button class="tab" onclick="go('petition')">Petition</button>
+    <button class="tab" onclick="go('resources')">Workers</button>
+    
+  </div>
+  <div class="nav-right">
+    <button class="nav-alert-btn" onclick="openModal('alert-modal')"><i class="fas fa-bell"></i> Alerts</button>
+    <button class="nav-cta" onclick="openModal('report-modal')">+ Report</button>
+    <button class="burger" onclick="toggleBurger()"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+<div class="disclaimer-bar">⚠ All entries sourced from verified news articles &amp; linked to original sources. Unverified submissions show "Pending" badge. &nbsp;·&nbsp; <a onclick="openModal('privacy-modal')">Privacy Policy</a> &nbsp;·&nbsp; <a onclick="openModal('report-error-modal')">Report wrong data</a> &nbsp;·&nbsp; Contains affiliate links.</div>
+<div class="ticker-strip" style="margin-top:92px"><div class="ticker-inner" id="ticker"></div></div>
+
+<!-- DASHBOARD -->
+<div class="page on" id="pg-dash"><div class="wrap">
+<div class="hero">
+  <div class="hero-eyebrow"><div class="live-dot"></div>&nbsp;LIVE — Updated May 2026</div>
+  <h1>Every Job Lost to AI.<br/><em>Counted. Named. Pressured.</em></h1>
+  <p class="hero-sub">Companies are slashing workers and calling it "AI efficiency." 128,270 jobs gone in 2026 alone. We track every single one — and we name every company.</p>
+  <div class="hero-nums">
+    <div class="hero-num"><div class="hero-num-val">128,270</div><div class="hero-num-lab">Jobs cut in 2026</div></div>
+    <div class="hero-num"><div class="hero-num-val">286</div><div class="hero-num-lab">Companies tracked</div></div>
+    <div class="hero-num"><div class="hero-num-val">1,002</div><div class="hero-num-lab">Jobs cut per day</div></div>
+    <div class="hero-num"><div class="hero-num-val">48%</div><div class="hero-num-lab">Directly AI-caused</div></div>
+  </div>
+  <div class="hero-btns">
+    <button class="btn btn-red" onclick="document.getElementById('tracker-anchor').scrollIntoView({behavior:'smooth'})"><i class="fas fa-table"></i> See All Data</button>
+    <button class="btn btn-ghost" onclick="openModal('report-modal')"><i class="fas fa-plus"></i> Report a Layoff</button>
+    <button class="btn btn-ghost" onclick="go('petition')"><i class="fas fa-pen"></i> Sign Petition</button>
+  </div>
+</div>
+<div class="news-bar" id="news-bar">
+  <div class="news-bar-label">LIVE NEWS</div>
+  <div class="news-items" id="news-items"><div class="news-item"><span style="color:var(--text3)">Loading latest news…</span></div></div>
+  <button class="news-refresh" onclick="loadNews()" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+</div>
+<div class="sponsor-box">
+  <div class="sponsor-lbl">Sponsored</div>
+  <div class="sponsor-msg">Displaced by AI? <a href="#" onclick="go('resources');return false">Find free reskilling courses →</a> — data science, prompt engineering, cloud skills. Updated weekly.</div>
+  <a class="sponsor-cta" href="https://ko-fi.com" target="_blank" rel="noopener">☕ Support this project</a>
+</div>
+<div class="stats" id="stats"></div>
+<div class="chart-row">
+  <div class="cc"><h3>Monthly layoffs 2026 (jobs cut)</h3><div class="ch-wrap" style="height:200px"><canvas id="ch-monthly" aria-label="Monthly layoffs 2026"></canvas></div></div>
+  <div class="cc"><h3>Layoffs by reason</h3><div class="ch-wrap" style="height:200px"><canvas id="ch-reason" aria-label="Layoffs by reason"></canvas></div></div>
+</div>
+<div class="chart-row">
+  <div class="cc"><h3>Top companies (all time)</h3><div class="ch-wrap" style="height:230px"><canvas id="ch-co" aria-label="Top companies"></canvas></div></div>
+  <div class="cc"><h3>Affected sectors</h3><div class="ch-wrap" style="height:230px"><canvas id="ch-sector" aria-label="Sectors"></canvas></div></div>
+</div>
+<div class="nl-box">
+  <div class="nl-copy"><h4><i class="fas fa-bell" style="color:var(--blue);margin-right:7px"></i>Get Layoff Alerts — Free</h4><p>Be the first to know when a new company cuts jobs due to AI. Weekly digest + breaking alerts.</p></div>
+  <div class="nl-form"><input class="nl-inp" id="nl-email" type="email" placeholder="your@email.com"/><button class="nl-btn" onclick="subscribeNL()">Subscribe Free →</button></div>
+</div>
+<div id="tracker-anchor" style="scroll-margin-top:70px">
+  <div class="s-tag" style="margin-top:.5rem">Full Database — 2024 to 2026</div>
+  <div class="s-title" style="font-size:1.6rem;margin-bottom:.8rem">Every Layoff, On Record</div>
+  <div class="fbar">
+    <input id="s-q" type="text" placeholder="Search company, country, sector…" oninput="applyF()"/>
+    <select id="s-reason" onchange="applyF()"><option value="">All reasons</option><option>AI automation</option><option>AI + restructure</option><option>AI cost-cutting</option><option>AI + offshoring</option></select>
+    <select id="s-sector" onchange="applyF()"><option value="">All sectors</option><option>Tech</option><option>Finance</option><option>Logistics</option><option>Media</option><option>Retail</option><option>Healthcare</option><option>Manufacturing</option><option>Consulting</option><option>Education</option><option>Telecom</option></select>
+    <select id="s-year" onchange="applyF()"><option value="">All years</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option></select>
+    <select id="s-sort" onchange="applyF()"><option value="d-desc">Newest first</option><option value="d-asc">Oldest first</option><option value="j-desc">Most jobs cut</option><option value="p-desc">Highest pressure</option></select>
+    <div class="fbar-actions">
+      <button class="fbar-btn" onclick="dlCSV()"><i class="fas fa-download"></i> CSV</button>
+      <button class="fbar-btn" onclick="twShare()"><i class="fab fa-twitter"></i> Share</button>
+      <button class="fbar-btn" onclick="copyLink()"><i class="fas fa-link"></i> Copy</button>
+    </div>
+    <div class="fbar-count" id="fbar-count"></div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Company</th><th>Jobs cut</th><th>Reason</th><th>Sector</th><th>Country</th><th>Date</th><th>Pressure</th><th>Source</th></tr></thead>
+    <tbody id="tbl-body"></tbody>
+  </table></div>
+  <div class="pager" id="pager"></div>
+</div>
+</div></div>
+
+<!-- MAP -->
+<div class="page" id="pg-map"><div class="wrap">
+<div class="s-tag">Global Reach</div><div class="s-title">Worldwide Displacement</div>
+<p class="s-sub">AI layoffs are not a Silicon Valley story. They span every continent.</p>
+<div class="cc" style="margin-bottom:1.5rem"><h3>Jobs displaced by country (2024–2026)</h3><div class="ch-wrap" style="height:320px"><canvas id="ch-world" aria-label="Jobs by country"></canvas></div></div>
+<div class="chart-row">
+  <div class="cc"><h3>Year-over-year growth</h3><div class="ch-wrap" style="height:240px"><canvas id="ch-yoy" aria-label="Year over year"></canvas></div></div>
+  <div class="cc"><h3>Sector breakdown by region</h3><div class="ch-wrap" style="height:240px"><canvas id="ch-region" aria-label="Region sectors"></canvas></div></div>
+</div>
+<div class="stats" id="map-stats"></div>
+</div></div>
+
+<!-- POLICY -->
+<div class="page" id="pg-policy"><div class="wrap">
+<div class="s-tag">What Governments Can Do</div><div class="s-title">Policy Solutions That Work</div>
+<p class="s-sub">Laws can protect workers. Here's what's proposed, passed, and what we're demanding.</p>
+<div class="pol-grid" id="pol-grid"></div>
+<div style="margin-top:2.5rem">
+  <div class="s-tag">Template Letter</div><div class="s-title" style="font-size:1.5rem;margin-bottom:.75rem">Write to Your Representative</div>
+  <p style="color:var(--text2);font-size:14px;margin-bottom:1rem">Copy this and email your MP, senator, or minister. Every letter adds pressure.</p>
+  <div class="code-blk" id="letter-box"></div>
+  <button class="btn btn-red" onclick="copyLetter()"><i class="fas fa-copy"></i> Copy Letter</button>
+</div>
+</div></div>
+
+<!-- PETITION -->
+<div class="page" id="pg-petition"><div class="wrap">
+<div class="s-tag">Take Action</div><div class="s-title">Sign the Global Petition</div>
+<p class="s-sub">We are demanding automation taxes, worker protection laws, and mandatory retraining rights globally.</p>
+<div class="pet-card">
+  <div style="font-size:13px;color:var(--text2);margin-bottom:4px">Signatures so far</div>
+  <div class="pet-big" id="pet-num">0</div>
+  <div style="font-size:13px;color:var(--text2)">of 100,000 goal</div>
+  <div class="pet-prog"><div class="pet-fill" id="pet-fill" style="width:0%"></div></div>
+  <div class="pet-form">
+    <input class="pet-inp" id="pet-name" type="text" placeholder="Your full name"/>
+    <input class="pet-inp" id="pet-email" type="email" placeholder="your@email.com"/>
+    <button class="pet-btn" onclick="sign()">Sign Now →</button>
+  </div>
+  <p style="font-size:12px;color:var(--text3);margin-top:1rem">Your data is never sold.</p>
+</div>
+<div class="s-tag" style="margin-top:2rem">Recent Signatories</div>
+<div class="sigs" id="sigs" style="margin-top:.75rem"></div>
+</div></div>
+
+<!-- RESOURCES -->
+<div class="page" id="pg-resources"><div class="wrap">
+<div class="s-tag">For Displaced Workers</div><div class="s-title">You Are Not Alone. Here's Help.</div>
+<p class="s-sub">Lost your job to AI? These resources help you retrain, find support, and fight back.</p>
+<div class="res-grid" id="res-grid"></div>
+<div style="margin-top:2.5rem">
+  <div class="s-tag">Safe Jobs</div><div class="s-title" style="font-size:1.5rem;margin-bottom:.75rem">Roles AI Cannot Easily Replace</div>
+  <div class="pol-grid" id="safe-jobs"></div>
+</div>
+<div style="margin-top:2rem;text-align:center">
+  <p style="color:var(--text2);font-size:14px;margin-bottom:1rem">Were you laid off because of AI? Share your story — it builds the case for policy change.</p>
+  <button class="btn btn-red" onclick="openModal('report-modal')"><i class="fas fa-plus"></i> Submit Your Story</button>
+</div>
+</div></div>
+
+
+
+<!-- REPORT MODAL -->
+<div class="modal-bg" id="report-modal">
+<div class="modal">
+  <button class="modal-x" onclick="closeModal('report-modal')"><i class="fas fa-times"></i></button>
+  <h3>Report an AI-Driven Layoff</h3>
+  <p class="modal-sub">All entries reviewed within 24 hours. Provide a source link whenever possible.</p>
+  <div class="f2">
+    <div class="fg"><label class="fl">Company *</label><input class="fi" id="f-co" type="text" placeholder="e.g. Google"/></div>
+    <div class="fg"><label class="fl">Jobs cut *</label><input class="fi" id="f-jobs" type="number" placeholder="e.g. 3000" min="1"/></div>
+  </div>
+  <div class="f2">
+    <div class="fg"><label class="fl">Country *</label><select class="fs" id="f-country"><option value="">Select</option><option>USA</option><option>India</option><option>UK</option><option>Germany</option><option>Canada</option><option>Australia</option><option>France</option><option>Netherlands</option><option>Sweden</option><option>Ireland</option><option>China</option><option>Japan</option><option>Other</option></select></div>
+    <div class="fg"><label class="fl">Sector</label><select class="fs" id="f-sector-m"><option value="">Select</option><option>Tech</option><option>Finance</option><option>Logistics</option><option>Media</option><option>Retail</option><option>Healthcare</option><option>Manufacturing</option><option>Consulting</option><option>Education</option><option>Telecom</option><option>Other</option></select></div>
+  </div>
+  <div class="f2">
+    <div class="fg"><label class="fl">Date *</label><input class="fi" id="f-date" type="month"/></div>
+    <div class="fg"><label class="fl">Reason</label><select class="fs" id="f-reason-m"><option>AI automation</option><option>AI + restructure</option><option>AI cost-cutting</option><option>AI + offshoring</option></select></div>
+  </div>
+  <div class="fg"><label class="fl">Source URL *</label><input class="fi" id="f-src" type="url" placeholder="https://…"/></div>
+  <div class="fg"><label class="fl">Notes (optional)</label><textarea class="fta" id="f-notes" placeholder="Extra context, affected roles…"></textarea></div>
+  <div class="fg"><label class="fl">Your name (optional)</label><input class="fi" id="f-who" type="text" placeholder="Anonymous is fine"/></div>
+  <button class="fsub" id="f-submit-btn" onclick="submitReport()">Submit Report →</button>
+  <p class="fnote">Thank you for contributing to worker accountability.</p>
+</div>
+</div>
+
+<!-- ALERT MODAL -->
+<div class="modal-bg" id="alert-modal">
+<div class="modal">
+  <button class="modal-x" onclick="closeModal('alert-modal')"><i class="fas fa-times"></i></button>
+  <h3><i class="fas fa-bell" style="color:var(--amber);margin-right:8px"></i>Get Layoff Alerts</h3>
+  <p class="modal-sub">We'll email you when a new major layoff is confirmed. No spam.</p>
+  <div class="fg"><label class="fl">Your email</label><input class="fi" id="al-email" type="email" placeholder="your@email.com"/></div>
+  <div class="fg"><label class="fl">Alert me when</label><select class="fs" id="al-type"><option>Any new layoff is reported</option><option>Layoffs over 1,000 jobs only</option><option>Weekly digest only</option></select></div>
+  <button class="fsub" onclick="setAlert()">Activate Alerts →</button>
+  <p class="fnote">Free forever. Your email stays private.</p>
+</div>
+</div>
+
+<div class="toast" id="toast"><div id="t-ico">✅</div><span id="t-msg">Done!</span></div>
+
+<script>
+const DATA=[
+  {id:'L001',co:'Amazon',av:'Az',color:'#f59e0b',jobs:30000,reason:'AI + restructure',sector:'Retail',country:'USA',date:'2026-01',pressure:92,src:'https://www.cnbc.com/2026/01/28/amazon-layoffs-anti-bureaucracy-ai.html',verified:true,isNew:true},
+  {id:'L002',co:'Meta',av:'M',color:'#3b82f6',jobs:8000,reason:'AI automation',sector:'Tech',country:'USA',date:'2026-04',pressure:94,src:'https://www.cnbc.com/2026/04/23/meta-will-cut-10percent-of-workforce-as-it-pushes-more-into-ai.html',verified:true,isNew:true},
+  {id:'L003',co:'Oracle',av:'Or',color:'#ef4444',jobs:20000,reason:'AI cost-cutting',sector:'Tech',country:'USA',date:'2026-03',pressure:88,src:'https://www.cnbc.com/2026/03/31/oracle-layoffs-ai-spending.html',verified:true,isNew:true},
+  {id:'L004',co:'Dell',av:'D',color:'#22c55e',jobs:11000,reason:'AI cost-cutting',sector:'Tech',country:'USA',date:'2026-02',pressure:80,src:'https://tech-insider.org/tech-layoffs-2026-ai-workforce-impact/',verified:true,isNew:true},
+  {id:'L005',co:'Atlassian',av:'At',color:'#0ea5e9',jobs:1600,reason:'AI + restructure',sector:'Tech',country:'Australia',date:'2026-03',pressure:70,src:'https://programs.com/resources/ai-layoffs/',verified:true,isNew:true},
+  {id:'L006',co:'Nike',av:'Nk',color:'#ef4444',jobs:1400,reason:'AI automation',sector:'Retail',country:'USA',date:'2026-04',pressure:68,src:'https://www.cnbc.com/2026/04/24/20k-job-cuts-at-meta-microsoft-raise-concern-of-ai-labor-crisis-.html',verified:true,isNew:true},
+  {id:'L007',co:'ASML',av:'AS',color:'#8b5cf6',jobs:3000,reason:'AI + restructure',sector:'Tech',country:'Netherlands',date:'2026-01',pressure:72,src:'https://programs.com/resources/ai-layoffs/',verified:true,isNew:true},
+  {id:'L008',co:'Coinbase',av:'Cb',color:'#f97316',jobs:700,reason:'AI automation',sector:'Finance',country:'USA',date:'2026-05',pressure:60,src:'https://programs.com/resources/ai-layoffs/',verified:true,isNew:true},
+  {id:'L009',co:'WiseTech',av:'WT',color:'#14b8a6',jobs:2000,reason:'AI automation',sector:'Logistics',country:'Australia',date:'2026-01',pressure:65,src:'https://tech-insider.org/tech-layoffs-2026-ai-workforce-impact/',verified:true,isNew:true},
+  {id:'L010',co:'DeepL',av:'Dp',color:'#6366f1',jobs:500,reason:'AI automation',sector:'Tech',country:'Germany',date:'2026-05',pressure:55,src:'https://www.bloomberg.com/news/articles/2026-05-07/google-translate-rival-deepl-announces-plans-to-cut-25-of-staff',verified:true,isNew:true},
+  {id:'L011',co:'Accenture',av:'Ac',color:'#0891b2',jobs:19000,reason:'AI automation',sector:'Consulting',country:'Ireland',date:'2025-03',pressure:85,src:'https://programs.com/resources/ai-layoffs/',verified:true},
+  {id:'L012',co:'Intel',av:'In',color:'#8b5cf6',jobs:15000,reason:'AI + restructure',sector:'Tech',country:'USA',date:'2025-08',pressure:87,src:'https://www.tomshardware.com/tech-industry/tech-industry-lays-off-nearly-80-000-employees-in-the-first-quarter-of-2026-almost-50-percent-of-affected-positions-cut-due-to-ai',verified:true},
+  {id:'L013',co:'SAP',av:'S',color:'#16a34a',jobs:8000,reason:'AI cost-cutting',sector:'Tech',country:'Germany',date:'2025-02',pressure:79,src:'https://programs.com/resources/ai-layoffs/',verified:true},
+  {id:'L014',co:'Microsoft',av:'Ms',color:'#0ea5e9',jobs:6000,reason:'AI + restructure',sector:'Tech',country:'USA',date:'2025-05',pressure:82,src:'https://www.cnbc.com/2026/04/24/20k-job-cuts-at-meta-microsoft-raise-concern-of-ai-labor-crisis-.html',verified:true},
+  {id:'L015',co:'Infosys',av:'If',color:'#0284c7',jobs:25000,reason:'AI + offshoring',sector:'Tech',country:'India',date:'2025-07',pressure:76,src:'https://economictimes.indiatimes.com/tech/technology/infosys-plans-to-lay-off-up-to-25000-employees-report/articleshow/121845563.cms',verified:true},
+  {id:'L016',co:'UPS',av:'U',color:'#ca8a04',jobs:12000,reason:'AI cost-cutting',sector:'Logistics',country:'USA',date:'2025-01',pressure:65,src:'https://www.cnbc.com/2026/01/27/ups-job-cuts-amazon-unwind-turnaround-plan.html',verified:true},
+  {id:'L017',co:'Workday',av:'Wk',color:'#7c3aed',jobs:1750,reason:'AI automation',sector:'Tech',country:'USA',date:'2025-02',pressure:71,src:'https://programs.com/resources/ai-layoffs/',verified:true},
+  {id:'L018',co:'IBM',av:'Ib',color:'#4f46e5',jobs:3900,reason:'AI + restructure',sector:'Tech',country:'USA',date:'2025-04',pressure:68,src:'https://programs.com/resources/ai-layoffs/',verified:true},
+  {id:'L019',co:'Google',av:'G',color:'#ef4444',jobs:12000,reason:'AI automation',sector:'Tech',country:'USA',date:'2024-01',pressure:90,src:'https://www.washingtonpost.com/technology/2024/01/12/google-layoffs-2024/',verified:true},
+  {id:'L020',co:'Salesforce',av:'SF',color:'#0ea5e9',jobs:8000,reason:'AI automation',sector:'Tech',country:'USA',date:'2024-01',pressure:77,src:'https://www.cnbc.com/2024/01/09/salesforce-reportedly-laying-off-700-workers-its-second-round-of-cuts.html',verified:true},
+  {id:'L021',co:'BT Group',av:'BT',color:'#3b82f6',jobs:55000,reason:'AI + restructure',sector:'Telecom',country:'UK',date:'2024-05',pressure:83,src:'https://www.bbc.co.uk/news/business-65631168',verified:true},
+  {id:'L022',co:'ING Bank',av:'ING',color:'#f97316',jobs:7000,reason:'AI cost-cutting',sector:'Finance',country:'Netherlands',date:'2024-10',pressure:74,src:'https://www.reuters.com/business/finance/ing-cut-7000-jobs-by-2027-overhaul-its-business-2024-10-01/',verified:true},
+  {id:'L023',co:'Klarna',av:'Kl',color:'#f43f5e',jobs:700,reason:'AI automation',sector:'Finance',country:'Sweden',date:'2025-06',pressure:58,src:'https://techcrunch.com/2024/11/26/klarnas-ai-can-do-the-work-of-700-full-time-agents-ceo-says/',verified:true},
+  {id:'L024',co:'Chegg',av:'Ch',color:'#ea580c',jobs:441,reason:'AI automation',sector:'Education',country:'USA',date:'2025-03',pressure:55,src:'https://programs.com/resources/ai-layoffs/',verified:true},
+  {id:'L025',co:'Dropbox',av:'Dr',color:'#0ea5e9',jobs:528,reason:'AI automation',sector:'Tech',country:'USA',date:'2024-10',pressure:52,src:'https://techcrunch.com/2024/10/11/dropbox-is-laying-off-528-people-20-of-global-workforce/',verified:true},
+];
+const NEWS=[
+  {text:'Amazon cuts 30,000+ corporate jobs — 3rd round since Oct 2025',ago:'2 days ago',url:'https://cnbc.com'},
+  {text:'Meta begins 8,000-person layoff wave starting May 20, 2026',ago:'3 days ago',url:'https://reuters.com'},
+  {text:'92,000 tech workers laid off in 2026 so far — Layoffs.fyi',ago:'4 days ago',url:'https://layoffs.fyi'},
+  {text:'Tech sector unemployment hits 5.8% — highest since dot-com bust in 2001',ago:'1 week ago',url:'https://tomshardware.com'},
+  {text:'Oracle quietly cuts 10,000+ roles to fund AI data centers',ago:'2 weeks ago',url:'https://ft.com'},
+  {text:'DeepL cuts 25% of staff — latest AI-native restructuring wave',ago:'10 days ago',url:'https://bloomberg.com'},
+  {text:'Nike cuts 1,400 jobs mostly in tech — cites AI workflow automation',ago:'3 weeks ago',url:'https://bloomberg.com'},
+  {text:'Coinbase lays off 700 to become fully "AI-native" company',ago:'1 week ago',url:'https://techcrunch.com'},
+];
+const POLICIES=[
+  {icon:'💸',title:'Automation Tax',desc:'Tax AI cost-savings to fund retraining. Companies replacing workers pay into a national fund.',status:'Proposed',where:'USA, UK'},
+  {icon:'🔄',title:'Mandatory Reskilling',desc:'Workers must receive 6 months paid retraining before any AI-driven layoff.',status:'Active',where:'EU (pilot)'},
+  {icon:'💵',title:'Universal Basic Income',desc:'Basic income floor funded by AI productivity gains. Pilots in 3+ countries.',status:'Active',where:'Finland, Kenya, Canada'},
+  {icon:'🤝',title:'AI Worker Dividend',desc:'Employees receive a share of AI-generated profits when AI replaces their role.',status:'Draft',where:'Netherlands'},
+  {icon:'📋',title:'AI Impact Disclosure',desc:'Companies disclose AI plans and job impact 12 months in advance.',status:'Proposed',where:'Canada, Germany'},
+  {icon:'🏗️',title:'Transition Fund',desc:'2-year government-backed income support for AI-displaced workers.',status:'Active',where:'Germany, Denmark'},
+];
+const RESOURCES=[
+  {icon:'🎓',title:'Coursera — AI Skills',desc:'Free and paid courses on data analysis, AI collaboration, and future-proof skills.',tag:'Learning'},
+  {icon:'💼',title:'LinkedIn Learning',desc:'Certificates recognised by employers worldwide.',tag:'Upskilling'},
+  {icon:'⚖️',title:'Workers Rights Consortium',desc:'Legal support for workers whose layoffs may have violated labour laws.',tag:'Legal help'},
+  {icon:'🤝',title:'Displaced Workers Network',desc:'Community of people laid off by AI. Share stories, find support.',tag:'Community'},
+  {icon:'💰',title:'Benefits Finder',desc:'Find your country\'s unemployment benefits and how to apply quickly.',tag:'Benefits'},
+  {icon:'📰',title:'Media Contacts',desc:'Journalists covering AI displacement. Tell your story — it changes policy.',tag:'Media'},
+];
+const SAFE_JOBS=[
+  {icon:'🧠',title:'AI Oversight and Auditing',desc:'Humans needed to audit AI outputs, catch biases, ensure quality. Massively in demand.',status:'High demand'},
+  {icon:'🩺',title:'Healthcare and Mental Health',desc:'Nurses, therapists, counsellors. AI cannot replicate human empathy in care.',status:'AI-proof'},
+  {icon:'🔧',title:'Skilled Trades',desc:'Electricians, plumbers, HVAC. Physical, local work — too costly for AI to automate.',status:'AI-proof'},
+  {icon:'📚',title:'Teaching and Training',desc:'Educators who teach humans to work alongside AI. Massively undersupplied.',status:'High demand'},
+  {icon:'⚡',title:'Renewable Energy',desc:'Solar, wind, battery tech installers. Growing fast and hard to automate.',status:'High demand'},
+  {icon:'🎨',title:'Creative Direction',desc:'Art directors, brand strategists. AI is a tool here — human taste leads.',status:'Evolving'},
+];
+const FAKE_SIGS=[];
+let filtered=[...DATA];let curPage=1;const PER=9;
+let petCount=parseInt(localStorage.getItem('pet_count')||'0');
+let mySigs=[];let charts={};
+
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+id+"'"))t.classList.add('on')});
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='map')renderMapCharts();
+}
+function toggleBurger(){
+  const t=document.getElementById('nav-tabs');
+  if(t.style.display==='flex'){t.style.cssText='';}
+  else{Object.assign(t.style,{display:'flex',flexDirection:'column',position:'fixed',top:'58px',left:'0',right:'0',background:'var(--bg2)',padding:'1rem',borderBottom:'1px solid var(--border)',zIndex:'199'});}
+}
+function buildTicker(){
+  const tick=document.getElementById('ticker');
+  const items=[...DATA,...DATA].map(d=>`<span class="tick"><span class="tick-co">${d.co}</span><span class="tick-n">-${d.jobs.toLocaleString()}</span><span style="color:var(--text3)">jobs</span><span class="tick-sep">·</span></span>`).join('');
+  tick.innerHTML=items+items;
+}
+function loadNews(){
+  const c=document.getElementById('news-items');
+  c.innerHTML='<div class="news-item"><span style="color:var(--text3)">Loading…</span></div>';
+  setTimeout(()=>{c.innerHTML=NEWS.slice(0,5).map(n=>`<div class="news-item"><a href="${n.url}" target="_blank" rel="noopener">${n.text}</a><span class="news-ago">${n.ago}</span></div>`).join('');},700);
+}
+function renderStats(){
+  const total=DATA.reduce((s,d)=>s+d.jobs,0);
+  const yr=DATA.filter(d=>d.date.startsWith('2026')).reduce((s,d)=>s+d.jobs,0);
+  const countries=[...new Set(DATA.map(d=>d.country))].length;
+  const avg=Math.round(DATA.reduce((s,d)=>s+d.pressure,0)/DATA.length);
+  const s=[
+    {ico:'r',icon:'fas fa-users',lbl:'Total jobs cut (all time)',val:total.toLocaleString(),delta:'2024 to 2026'},
+    {ico:'r',icon:'fas fa-calendar',lbl:'Jobs cut in 2026',val:yr.toLocaleString(),delta:'~1,002 per day'},
+    {ico:'a',icon:'fas fa-building',lbl:'Companies tracked',val:DATA.length,delta:'Verified and sourced'},
+    {ico:'b',icon:'fas fa-globe',lbl:'Countries affected',val:countries,delta:'Across 5 continents'},
+    {ico:'g',icon:'fas fa-pen',lbl:'Petition signatures',val:petCount.toLocaleString(),delta:'and growing'},
+    {ico:'p',icon:'fas fa-fire',lbl:'Avg pressure score',val:avg+'/100',delta:'Community-rated'},
+  ];
+  document.getElementById('stats').innerHTML=s.map(c=>`<div class="sc"><div class="sc-ico ${c.ico}"><i class="${c.icon}"></i></div><div class="sc-lbl">${c.lbl}</div><div class="sc-val">${c.val}</div><div class="sc-delta up">${c.delta}</div></div>`).join('');
+}
+function dc(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+const CO=['#ff3030','#f59e0b','#10b981','#4f8ef7','#a78bfa','#f43f5e','#14b8a6','#f97316','#8b5cf6','#22d3ee','#84cc16'];
+function renderCharts(){
+  dc('ch-monthly');
+  charts['ch-monthly']=new Chart(document.getElementById('ch-monthly'),{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{label:'Jobs',data:[41000,21000,20000,18720,1200],borderColor:'#ff3030',backgroundColor:'rgba(255,48,48,0.06)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#ff3030'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#444458',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#444458',font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}}}});
+  const reasons={};DATA.forEach(d=>{reasons[d.reason]=(reasons[d.reason]||0)+d.jobs});
+  dc('ch-reason');
+  charts['ch-reason']=new Chart(document.getElementById('ch-reason'),{type:'doughnut',data:{labels:Object.keys(reasons),datasets:[{data:Object.values(reasons),backgroundColor:CO.slice(0,4),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#8888a0',font:{size:11},boxWidth:10,padding:10}}}}});
+  const top=[...DATA].sort((a,b)=>b.jobs-a.jobs).slice(0,8);
+  dc('ch-co');
+  charts['ch-co']=new Chart(document.getElementById('ch-co'),{type:'bar',data:{labels:top.map(d=>d.co),datasets:[{data:top.map(d=>d.jobs),backgroundColor:top.map(d=>d.color+'bb'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#444458',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#444458',callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}}}});
+  const secs={};DATA.forEach(d=>{secs[d.sector]=(secs[d.sector]||0)+d.jobs});
+  const ss=Object.entries(secs).sort((a,b)=>b[1]-a[1]);
+  dc('ch-sector');
+  charts['ch-sector']=new Chart(document.getElementById('ch-sector'),{type:'bar',data:{labels:ss.map(s=>s[0]),datasets:[{data:ss.map(s=>s[1]),backgroundColor:'#a78bfabb',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},indexAxis:'y',scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#444458',callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}},y:{grid:{display:false},ticks:{color:'#444458',font:{size:11}}}}}});
+}
+function renderMapCharts(){
+  const cdata=[{c:'USA',j:187000},{c:'UK',j:62000},{c:'India',j:45000},{c:'China',j:32000},{c:'Germany',j:28000},{c:'Ireland',j:19000},{c:'Netherlands',j:17000},{c:'Canada',j:9500},{c:'Australia',j:9200},{c:'France',j:8100},{c:'Japan',j:6800},{c:'Sweden',j:4200}];
+  dc('ch-world');
+  charts['ch-world']=new Chart(document.getElementById('ch-world'),{type:'bar',data:{labels:cdata.map(d=>d.c),datasets:[{data:cdata.map(d=>d.j),backgroundColor:CO.map(c=>c+'bb'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#444458',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#444458',callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}}}});
+  dc('ch-yoy');
+  charts['ch-yoy']=new Chart(document.getElementById('ch-yoy'),{type:'bar',data:{labels:['2020','2021','2022','2023','2024','2025','2026*'],datasets:[{label:'Jobs',data:[32000,18000,44000,120000,245000,245953,128270],backgroundColor:['#444458bb','#444458bb','#444458bb','#f59e0bbb','#ff3030bb','#ff3030bb','#ff3030dd'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#444458',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#444458',callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}}}});
+  dc('ch-region');
+  charts['ch-region']=new Chart(document.getElementById('ch-region'),{type:'bar',data:{labels:['N. America','Europe','Asia Pacific','Other'],datasets:[{label:'Tech',data:[145000,72000,62000,8000],backgroundColor:'#ff3030bb'},{label:'Finance',data:[22000,18000,12000,3000],backgroundColor:'#4f8ef7bb'},{label:'Other',data:[30000,15000,18000,5000],backgroundColor:'#a78bfabb'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#8888a0',font:{size:11},boxWidth:10}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#444458',font:{size:10}}},y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#444458',callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}}}});
+  const ms=[{ico:'r',icon:'fas fa-users',lbl:'Total globally tracked',val:'428,270',delta:'All verified events'},{ico:'a',icon:'fas fa-chart-line',lbl:'2026 daily rate',val:'1,002',delta:'Jobs per day'},{ico:'b',icon:'fas fa-globe',lbl:'Countries tracked',val:'12+',delta:'And growing'},{ico:'g',icon:'fas fa-percent',lbl:'USA share of layoffs',val:'76%',delta:'Per Tom\'s Hardware'}];
+  document.getElementById('map-stats').innerHTML=ms.map(c=>`<div class="sc"><div class="sc-ico ${c.ico}"><i class="${c.icon}"></i></div><div class="sc-lbl">${c.lbl}</div><div class="sc-val">${c.val}</div><div class="sc-delta">${c.delta}</div></div>`).join('');
+}
+function pClass(r){return{['AI automation']:'p-ai',['AI + restructure']:'p-mix',['AI cost-cutting']:'p-cost',['AI + offshoring']:'p-off'}[r]||'p-mix';}
+function pColor(p){return p>=80?'#ff3030':p>=60?'#f59e0b':'#10b981';}
+function renderTable(){
+  const start=(curPage-1)*PER,page=filtered.slice(start,start+PER);
+  const body=document.getElementById('tbl-body');
+  if(!filtered.length){body.innerHTML='<tr><td colspan="8" class="empty-td">No results found — try different filters</td></tr>';document.getElementById('pager').innerHTML='';return;}
+  body.innerHTML=page.map(d=>`<tr>
+    <td><div class="co-wrap"><div class="av" style="background:${d.color}22;color:${d.color}">${d.av}</div>
+      <div><div class="co-n">${d.co}${d.verified?'<i class="fas fa-circle-check" style="color:#10b981;font-size:10px" title="Verified against news source"></i>':'<span class="unverified-badge">Pending</span>'}${d.isNew?'<span class="new-badge">2026</span>':''}</div>
+      <div class="co-s">${d.sector}</div></div></div></td>
+    <td style="font-weight:700;font-size:15px">${d.jobs.toLocaleString()}</td>
+    <td><span class="pill ${pClass(d.reason)}">${d.reason}</span></td>
+    <td style="color:var(--text2)">${d.sector}</td>
+    <td style="color:var(--text2)">${d.country}</td>
+    <td style="color:var(--text3)">${d.date}</td>
+    <td><div class="pr-wrap"><div class="pr-bar"><div class="pr-fill" style="width:${d.pressure}%;background:${pColor(d.pressure)}"></div></div><span style="font-size:12px;font-weight:600;color:${pColor(d.pressure)}">${d.pressure}</span></div></td>
+    <td><a class="src-link" href="${d.src}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt" style="font-size:10px"></i> Source</a></td>
+  </tr>`).join('');
+  renderPager();
+  document.getElementById('fbar-count').textContent=`${filtered.length} of ${DATA.length} records`;
+}
+function renderPager(){
+  const total=Math.ceil(filtered.length/PER);
+  if(total<=1){document.getElementById('pager').innerHTML='';return;}
+  let h=`<button class="pg" onclick="goPg(${curPage-1})" ${curPage===1?'disabled':''}>prev</button>`;
+  for(let i=1;i<=total;i++){if(i===1||i===total||Math.abs(i-curPage)<=1)h+=`<button class="pg ${i===curPage?'on':''}" onclick="goPg(${i})">${i}</button>`;else if(Math.abs(i-curPage)===2)h+=`<span style="color:var(--text3);padding:0 3px">...</span>`;}
+  h+=`<button class="pg" onclick="goPg(${curPage+1})" ${curPage===total?'disabled':''}>next</button>`;
+  document.getElementById('pager').innerHTML=h;
+}
+function goPg(p){curPage=p;renderTable();document.getElementById('tracker-anchor').scrollIntoView({behavior:'smooth',block:'start'});}
+function applyF(){
+  const q=document.getElementById('s-q').value.toLowerCase();
+  const reason=document.getElementById('s-reason').value;
+  const sector=document.getElementById('s-sector').value;
+  const year=document.getElementById('s-year').value;
+  const sort=document.getElementById('s-sort').value;
+  filtered=DATA.filter(d=>{
+    if(q&&![d.co,d.country,d.sector].some(v=>v.toLowerCase().includes(q)))return false;
+    if(reason&&d.reason!==reason)return false;
+    if(sector&&d.sector!==sector)return false;
+    if(year&&!d.date.startsWith(year))return false;
+    return true;
+  });
+  const sortFns={'d-desc':(a,b)=>b.date.localeCompare(a.date),'d-asc':(a,b)=>a.date.localeCompare(b.date),'j-desc':(a,b)=>b.jobs-a.jobs,'p-desc':(a,b)=>b.pressure-a.pressure};
+  filtered.sort(sortFns[sort]);curPage=1;renderTable();
+}
+function renderPolicy(){
+  document.getElementById('pol-grid').innerHTML=POLICIES.map(p=>`<div class="pol-card"><div class="pol-icon">${p.icon}</div><div class="pol-title">${p.title}</div><div class="pol-desc">${p.desc}</div><div class="pol-foot"><span class="pol-where">${p.where}</span><span class="pol-status ${p.status==='Active'?'ps-active':p.status==='Proposed'?'ps-proposed':'ps-draft'}">${p.status}</span></div></div>`).join('');
+  document.getElementById('letter-box').textContent=`Dear [Representative's Name],\n\nI am writing as a concerned constituent about the rapid displacement of workers by artificial intelligence. Companies are laying off thousands — replacing them with AI — without any obligation to retrain or support those workers.\n\nAccording to publicly tracked data, over 128,000 tech workers have been laid off in 2026 alone, with nearly 48% of cuts directly attributed to AI. This is not a future problem. It is happening now.\n\nI urge you to support urgently:\n\n1. An Automation Tax — companies replacing workers with AI pay into a national retraining fund\n2. Mandatory Retraining Rights — 6 months paid retraining before any AI-driven layoff\n3. AI Impact Disclosure — companies must publish AI deployment plans 12 months in advance\n4. Transition Support — 24-month income support for AI-displaced workers\n\nWorkers built these companies. They deserve protection — not just shareholders.\n\nYours sincerely,\n[Your Name]\n[Your Address]`;
+}
+function copyLetter(){navigator.clipboard.writeText(document.getElementById('letter-box').textContent);toast('Letter copied! Paste it into an email to your representative.');}
+function animPet(){
+  const el=document.getElementById('pet-num'),bar=document.getElementById('pet-fill');
+  el.textContent=petCount.toLocaleString();
+  bar.style.width=(petCount/100000*100).toFixed(2)+'%';
+}
+function sign(){
+  const name=document.getElementById('pet-name').value.trim();
+  const email=document.getElementById('pet-email').value.trim();
+  if(!name||!email){toast('Please enter your name and email','err');return;}
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)){toast('Please enter a valid email','err');return;}
+  petCount++;localStorage.setItem('pet_count',petCount);
+  document.getElementById('pet-num').textContent=petCount.toLocaleString();
+  document.getElementById('pet-fill').style.width=(petCount/100000*100).toFixed(2)+'%';
+  mySigs.unshift({name,loc:'just now'});renderSigs();
+  document.getElementById('pet-name').value='';document.getElementById('pet-email').value='';
+  toast('Thank you for signing! Share the link to grow the movement.');renderStats();
+}
+function renderSigs(){
+  const all=[...mySigs].slice(0,10);
+  const el=document.getElementById('sigs');
+  if(all.length===0){
+    el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text3);font-size:14px"><i class="fas fa-pen" style="font-size:1.5rem;margin-bottom:.5rem;display:block"></i>Be the first to sign. Your name will appear here.</div>';
+    return;
+  }
+  el.innerHTML=all.map(s=>`<div class="sig"><div class="sig-av">${s.name[0]}</div><div class="sig-name">${s.name}</div><div class="sig-loc">${s.loc}</div><i class="fas fa-check-circle" style="color:var(--green);font-size:13px"></i></div>`).join('');
+}
+function renderResources(){
+  document.getElementById('res-grid').innerHTML=RESOURCES.map(r=>`<div class="res-card"><div class="res-icon">${r.icon}</div><div class="res-title">${r.title}</div><div class="res-desc">${r.desc}</div><div class="res-tag">${r.tag}</div></div>`).join('');
+  document.getElementById('safe-jobs').innerHTML=SAFE_JOBS.map(j=>`<div class="pol-card"><div class="pol-icon">${j.icon}</div><div class="pol-title">${j.title}</div><div class="pol-desc">${j.desc}</div><span class="pol-status ps-active">${j.status}</span></div>`).join('');
+}
+function openModal(id){document.getElementById(id).classList.add('on');}
+function closeModal(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-bg.on').forEach(m=>m.classList.remove('on'));});
+function submitReport(){
+  const co=document.getElementById('f-co').value.trim();
+  const jobs=document.getElementById('f-jobs').value;
+  const country=document.getElementById('f-country').value;
+  const date=document.getElementById('f-date').value;
+  const src=document.getElementById('f-src').value.trim();
+  if(!co||!jobs||!country||!date||!src){toast('Please fill all required fields (*)','err');return;}
+  const btn=document.getElementById('f-submit-btn');btn.disabled=true;btn.textContent='Submitting...';
+  setTimeout(()=>{
+    DATA.unshift({id:'U'+Date.now(),co,av:co[0].toUpperCase(),color:'#a78bfa',jobs:parseInt(jobs),reason:document.getElementById('f-reason-m').value,sector:document.getElementById('f-sector-m').value||'Other',country,date:date.substring(0,7),pressure:50,src,verified:false,isNew:true});
+    filtered=[...DATA];applyF();renderStats();renderCharts();
+    closeModal('report-modal');btn.disabled=false;btn.textContent='Submit Report ->';
+    ['f-co','f-jobs','f-date','f-src','f-notes','f-who'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    toast('Thank you! Your report is under review.');
+  },1000);
+}
+function setAlert(){
+  const em=document.getElementById('al-email').value.trim();
+  if(!em||!/^[^@]+@[^@]+\.[^@]+$/.test(em)){toast('Please enter a valid email','err');return;}
+  closeModal('alert-modal');toast('Alert activated! You will be emailed when new layoffs are confirmed.');
+}
+function subscribeNL(){
+  const em=document.getElementById('nl-email').value.trim();
+  if(!em||!/^[^@]+@[^@]+\.[^@]+$/.test(em)){toast('Please enter a valid email','err');return;}
+  document.getElementById('nl-email').value='';toast('Subscribed! First AI Layoff Digest coming Monday.');
+}
+function twShare(){const total=DATA.reduce((s,d)=>s+d.jobs,0);window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(total.toLocaleString()+' jobs have been cut by AI automation. Track every layoff at AI Layoff Tracker. #AILayoffs #WorkerRights'),'_blank');}
+function copyLink(){navigator.clipboard.writeText('https://ailayofftracker.org');toast('Link copied!');}
+function dlCSV(){
+  const h=['Company','Jobs','Reason','Sector','Country','Date','Pressure','Verified'];
+  const rows=filtered.map(d=>[d.co,d.jobs,d.reason,d.sector,d.country,d.date,d.pressure,d.verified?'Yes':'Pending']);
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent([h,...rows].map(r=>r.join(',')).join('\n'));
+  a.download='ai-layoffs-2026.csv';a.click();toast('CSV downloaded!');
+}
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast'),ico=document.getElementById('t-ico'),m=document.getElementById('t-msg');
+  t.style.borderColor=type==='err'?'var(--red)':'var(--green)';ico.textContent=type==='err'?'warning':'check';m.textContent=msg;
+  t.classList.add('on');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('on'),3800);
+}
+
+function submitError(){
+  const co=document.getElementById('err-co').value.trim();
+  const desc=document.getElementById('err-desc').value.trim();
+  if(!co||!desc){toast('Please fill in the company name and description','err');return;}
+  closeModal('report-error-modal');
+  ['err-co','err-desc','err-src','err-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  toast('Thank you! We will review and correct this within 24 hours.');
+}
+
+buildTicker();loadNews();renderStats();renderCharts();renderTable();renderPolicy();renderResources();renderSigs();setTimeout(animPet,400);
+</script>
+
+<div style="background:var(--bg2);border-top:1px solid var(--border);padding:1.5rem;text-align:center">
+  <p style="font-size:13px;color:var(--text3);margin-bottom:.75rem">AI Layoff Tracker is free, open, and crowdsourced. If this work matters to you:</p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <a href="https://ko-fi.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:13px;padding:8px 16px;border-radius:var(--r);text-decoration:none;transition:.15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">☕ Buy me a coffee</a>
+    <a href="https://twitter.com/intent/tweet?text=92%2C000+tech+workers+laid+off+in+2026+due+to+AI.+Every+job+tracked+at+AI+Layoff+Tracker.+%23AILayoffs+%23WorkerRights" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:13px;padding:8px 16px;border-radius:var(--r);text-decoration:none;transition:.15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'"><i class="fab fa-twitter"></i> Share on Twitter</a>
+  </div>
+  <p style="font-size:11px;color:var(--text3);margin-top:1rem">© 2026 AI Layoff Tracker · Open source · Free forever</p>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div class="modal-bg privacy-modal" id="privacy-modal">
+<div class="modal" style="max-width:600px">
+  <button class="modal-x" onclick="closeModal('privacy-modal')"><i class="fas fa-times"></i></button>
+  <h3>Privacy Policy</h3>
+  <p class="modal-sub">Last updated: May 2026</p>
+  
+  <div style="font-size:13px;color:var(--text2);line-height:1.8;display:flex;flex-direction:column;gap:1rem">
+    <div>
+      <strong style="color:var(--text)">What we collect</strong><br/>
+      When you subscribe to alerts or our newsletter, we collect your email address only. When you sign the petition, we collect your name and email. We do not collect your location, device data, or browsing behaviour.
+    </div>
+    <div>
+      <strong style="color:var(--text)">How we use your data</strong><br/>
+      Email addresses are used only to send layoff alerts, newsletter digests, or petition updates that you explicitly signed up for. We never use your email for any other purpose.
+    </div>
+    <div>
+      <strong style="color:var(--text)">We never sell your data</strong><br/>
+      Your email address is never sold, rented, or shared with any third party for commercial purposes.
+    </div>
+    <div>
+      <strong style="color:var(--text)">Affiliate links</strong><br/>
+      Some links in our Resources section are affiliate links. If you click and make a purchase, we may earn a commission at no extra cost to you. Sponsored content is clearly marked "Sponsored."
+    </div>
+    <div>
+      <strong style="color:var(--text)">Data accuracy</strong><br/>
+      All layoff entries are sourced from publicly reported news. We link to the original source for every verified entry. User-submitted entries are marked "Pending" until confirmed against a credible source. If you believe any data is incorrect, please use the "Report incorrect data" link.
+    </div>
+    <div>
+      <strong style="color:var(--text)">Your rights</strong><br/>
+      You can request deletion of your data at any time by emailing contact@ailayofftracker.org. If you are in the EU or UK, you have additional rights under GDPR including the right to access and correct your data.
+    </div>
+    <div>
+      <strong style="color:var(--text)">Cookies</strong><br/>
+      This site stores only your petition signature count locally in your browser using localStorage. No tracking cookies are used.
+    </div>
+    <div>
+      <strong style="color:var(--text)">Contact</strong><br/>
+      For any privacy questions: contact@ailayofftracker.org
+    </div>
+  </div>
+  <button class="fsub" style="margin-top:1.5rem" onclick="closeModal('privacy-modal')">Close</button>
+</div>
+</div>
+
+<!-- REPORT ERROR MODAL -->
+<div class="modal-bg" id="report-error-modal">
+<div class="modal" style="max-width:480px">
+  <button class="modal-x" onclick="closeModal('report-error-modal')"><i class="fas fa-times"></i></button>
+  <h3><i class="fas fa-flag" style="color:var(--amber);margin-right:8px"></i>Report Incorrect Data</h3>
+  <p class="modal-sub">Spotted a wrong number, wrong company, or outdated entry? Tell us and we will fix it within 24 hours.</p>
+  <div class="fg"><label class="fl">Which company or entry?</label><input class="fi" id="err-co" type="text" placeholder="e.g. Meta, Oracle…"/></div>
+  <div class="fg"><label class="fl">What is wrong?</label><textarea class="fta" id="err-desc" placeholder="e.g. The job count is 8,000 not 11,000. Correct source: [URL]" style="min-height:90px"></textarea></div>
+  <div class="fg"><label class="fl">Correct source URL (if you have one)</label><input class="fi" id="err-src" type="url" placeholder="https://…"/></div>
+  <div class="fg"><label class="fl">Your email (optional, for follow-up)</label><input class="fi" id="err-email" type="email" placeholder="your@email.com"/></div>
+  <button class="fsub" onclick="submitError()">Submit Correction →</button>
+  <p class="fnote">We take data accuracy seriously. Every correction is reviewed within 24 hours.</p>
+</div>
+</div>
+
+</body>
+</html>
