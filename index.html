@@ -623,10 +623,35 @@ function toast(msg,type='ok'){
 function submitError(){
   const co=document.getElementById('err-co').value.trim();
   const desc=document.getElementById('err-desc').value.trim();
+  const src=document.getElementById('err-src').value.trim();
+  const email=document.getElementById('err-email').value.trim();
   if(!co||!desc){toast('Please fill in the company name and description','err');return;}
-  closeModal('report-error-modal');
-  ['err-co','err-desc','err-src','err-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  toast('Thank you! We will review and correct this within 24 hours.');
+  const btn=document.querySelector('#report-error-modal .fsub');
+  btn.disabled=true;btn.textContent='Sending...';
+  fetch('https://formspree.io/f/mojbanbe',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({
+      subject:'Data Correction: '+co,
+      company:co,
+      correction:desc,
+      source:src||'Not provided',
+      email:email||'Anonymous',
+      _subject:'AI Layoff Tracker — Data Correction Request'
+    })
+  }).then(r=>{
+    btn.disabled=false;btn.textContent='Submit Correction →';
+    if(r.ok){
+      closeModal('report-error-modal');
+      ['err-co','err-desc','err-src','err-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+      toast('Correction submitted! We will review and fix within 24 hours.');
+    } else {
+      toast('Something went wrong. Please try again.','err');
+    }
+  }).catch(()=>{
+    btn.disabled=false;btn.textContent='Submit Correction →';
+    toast('Connection error. Please try again.','err');
+  });
 }
 
 buildTicker();loadNews();renderStats();renderCharts();renderTable();renderPolicy();renderResources();renderSigs();setTimeout(animPet,400);
@@ -671,7 +696,7 @@ buildTicker();loadNews();renderStats();renderCharts();renderTable();renderPolicy
     </div>
     <div>
       <strong style="color:var(--text)">Your rights</strong><br/>
-      You can request deletion of your data at any time by emailing contact@ailayofftracker.org. If you are in the EU or UK, you have additional rights under GDPR including the right to access and correct your data.
+      You can request deletion of your data at any time by emailing https://formspree.io/f/mojbanbe. If you are in the EU or UK, you have additional rights under GDPR including the right to access and correct your data.
     </div>
     <div>
       <strong style="color:var(--text)">Cookies</strong><br/>
@@ -679,10 +704,18 @@ buildTicker();loadNews();renderStats();renderCharts();renderTable();renderPolicy
     </div>
     <div>
       <strong style="color:var(--text)">Contact</strong><br/>
-      For any privacy questions: contact@ailayofftracker.org
+      For any privacy questions, use the contact form below.
     </div>
   </div>
-  <button class="fsub" style="margin-top:1.5rem" onclick="closeModal('privacy-modal')">Close</button>
+  <div style="background:var(--bg4);border-radius:var(--r);padding:1.25rem;margin:1rem 0">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.75rem">Contact / Data Request</div>
+        <form action="https://formspree.io/f/mojbanbe" method="POST" style="display:flex;flex-direction:column;gap:10px">
+          <input type="email" name="email" placeholder="Your email address" required style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13px;padding:9px 13px;border-radius:var(--r);outline:none;width:100%"/>
+          <textarea name="message" placeholder="Your question, correction request, or data removal request…" required rows="3" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13px;padding:9px 13px;border-radius:var(--r);outline:none;width:100%;resize:vertical"></textarea>
+          <button type="submit" style="background:var(--red);color:#fff;border:none;font-family:var(--font);font-size:13px;font-weight:700;padding:10px;border-radius:var(--r);cursor:pointer">Send Message →</button>
+        </form>
+      </div>
+      <button class="fsub" style="margin-top:.5rem" onclick="closeModal('privacy-modal')">Close</button>
 </div>
 </div>
 
